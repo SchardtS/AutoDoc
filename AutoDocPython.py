@@ -12,7 +12,7 @@ def generate_documentation(code):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-0613",
         messages=[
-            {"role": "system", "content": "You are a helpful code documentation assistant generating markdown documentation for a Python script."},
+            {"role": "system", "content": "You are generating code documentation for a project written in Python. The project is about analyzing data from computational fluid dynamics simulations. The documentation should at least include all the functions as well as their input and output together with a tiny description of what the function does. It should be written in Markdown syntax."},
             {"role": "user", "content": code}
         ]
     )
@@ -24,14 +24,14 @@ def process_script(script_path, output_directory):
         with open(script_path, "r") as file:
             code = file.read()
             
-            ## Parse the code
-            #parsed_code = ast.parse(code)
-            #
-            ## Convert the AST to source code
-            #source_code = astor.to_source(parsed_code)
+            # Parse the code
+            parsed_code = ast.parse(code)
+            
+            # Convert the AST to source code
+            source_code = astor.to_source(parsed_code)
             
             # Generate documentation comments
-            documentation = generate_documentation(code)
+            documentation = generate_documentation(source_code)
             
             # Create a file for documentation in the output directory
             script_name = os.path.basename(script_path)
@@ -55,7 +55,7 @@ def process_directory(directory_path, output_directory):
                 process_script(script_path, output_directory)
 
 def main():
-    input_directory = "../ProjectTemplate"
+    input_directory = "../CFD"
     output_directory = "Results"
     process_directory(input_directory, output_directory)
 

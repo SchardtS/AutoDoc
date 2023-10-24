@@ -1,7 +1,5 @@
 import os
-import ast
 import openai
-import astor  # Import astor for AST-to-source code conversion
 
 # Set your OpenAI API key
 import config   
@@ -12,7 +10,7 @@ def generate_documentation(code):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-0613",
         messages=[
-            {"role": "system", "content": "You are a helpful code documentation assistant generating markdown documentation for a Python script."},
+            {"role": "system", "content": "You are generating code documentation for a project written in the Julia programming language. The documentation should at least include all the functions as well as their input and output. It should be written in Markdown syntax. The project is a mechanistic species distribution model using stochastic and metabolistic processes."},
             {"role": "user", "content": code}
         ]
     )
@@ -21,14 +19,9 @@ def generate_documentation(code):
 # Function to process a Python script and generate documentation
 def process_script(script_path, output_directory):
     try:
+        print(f"Processing {script_path}")
         with open(script_path, "r") as file:
             code = file.read()
-            
-            ## Parse the code
-            #parsed_code = ast.parse(code)
-            #
-            ## Convert the AST to source code
-            #source_code = astor.to_source(parsed_code)
             
             # Generate documentation comments
             documentation = generate_documentation(code)
@@ -50,12 +43,12 @@ def process_script(script_path, output_directory):
 def process_directory(directory_path, output_directory):
     for root, dirs, files in os.walk(directory_path):
         for file in files:
-            if file.endswith(".py"):
+            if file.endswith(".jl"):
                 script_path = os.path.join(root, file)
                 process_script(script_path, output_directory)
 
 def main():
-    input_directory = "../ProjectTemplate"
+    input_directory = "../MetaRange/src"
     output_directory = "Results"
     process_directory(input_directory, output_directory)
 
